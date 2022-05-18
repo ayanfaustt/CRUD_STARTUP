@@ -2,6 +2,7 @@ import db from '../database.js';
 import sequelize from 'sequelize';
 
 
+
 const Startup = db.define('startup',{
     id_startup:{
         type: sequelize.INTEGER,
