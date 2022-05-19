@@ -3,7 +3,7 @@ import Startup from './models/Startup.js';
 import Linguagem from './models/Linguagem_Programacao.js';
 import Programador from './models/Programador.js'
 import Programador_Linguagem from './models/Programador_Linguagem.js';
-
+import cors from 'cors';
 import express from "express";
 
 
@@ -12,6 +12,8 @@ import express from "express";
 const server = express();
 
 server.use(express.json());
+server.use(cors());
+
 //geral
 server.get('/',  async (req, res)=>{
     await db.sync();
@@ -21,6 +23,12 @@ server.get('/',  async (req, res)=>{
     const Programador_Linguagens = await Programador_Linguagem.findAll();
     return res.status(200).json({Startups, Linguagens,
          Programadores, Programador_Linguagens});
+});
+server.get('/startup',  async (req, res)=>{
+    await db.sync();
+    const Startups = await Startup.findAll();
+
+    return res.status(200).json(Startups);
 });
 
 //Startup
