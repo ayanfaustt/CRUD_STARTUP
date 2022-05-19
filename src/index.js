@@ -15,7 +15,7 @@ server.use(express.json());
 server.use(cors());
 
 //geral
-server.get('/',  async (req, res)=>{
+/*server.get('/',  async (req, res)=>{
     await db.sync();
     const Startups = await Startup.findAll();
     const Linguagens = await Linguagem.findAll();
@@ -23,7 +23,9 @@ server.get('/',  async (req, res)=>{
     const Programador_Linguagens = await Programador_Linguagem.findAll();
     return res.status(200).json({Startups, Linguagens,
          Programadores, Programador_Linguagens});
-});
+}); */
+
+//Startup
 server.get('/startup',  async (req, res)=>{
     await db.sync();
     const Startups = await Startup.findAll();
@@ -31,7 +33,14 @@ server.get('/startup',  async (req, res)=>{
     return res.status(200).json(Startups);
 });
 
-//Startup
+server.get('/startup/:id_startup',  async (req, res)=>{
+    await db.sync();
+    const StartupOne = await Startup.findOne({where: {id_startup: req.params.id_startup }});
+
+    return res.status(200).json(StartupOne);
+});
+
+
 server.post('/add/startup', async (req, res)=>{
     const {id_startup, nome_startup, cidade_sede} = req.body;
 
