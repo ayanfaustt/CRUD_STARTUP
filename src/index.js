@@ -5,13 +5,15 @@ import Programador from './models/Programador.js'
 import Programador_Linguagem from './models/Programador_Linguagem.js';
 import cors from 'cors';
 import express from "express";
+import bodyParser from 'body-parser'
 
 
 
 
 const server = express();
-
-server.use(express.json());
+server.use(bodyParser.urlencoded({ extended: true }));
+server.use(bodyParser.json());
+//server.use(express.json());
 server.use(cors());
 
 //geral
@@ -32,7 +34,7 @@ server.get('/startup',  async (req, res)=>{
 
     return res.status(200).json(Startups);
 });
-
+// linhaespecifica.html
 server.get('/startup/:id_startup',  async (req, res)=>{
     await db.sync();
     const StartupOne = await Startup.findOne({where: {id_startup: req.params.id_startup }});
@@ -42,6 +44,7 @@ server.get('/startup/:id_startup',  async (req, res)=>{
 
 
 server.post('/add/startup', async (req, res)=>{
+    console.log(req)
     const {id_startup, nome_startup, cidade_sede} = req.body;
 
     const novaStartup = await Startup.create({
@@ -55,11 +58,11 @@ server.post('/add/startup', async (req, res)=>{
     return res.json(novaStartup);
 })
 
-server.delete('/startup/:id_startup', async(req, res)=>{
+server.delete('/startup/delete/:id_startup', async(req, res)=>{
     try {
         await db.sync();
         const startup = await Startup.destroy({where:{id_startup: req.params.id_startup}});
-        return res.status(200).json({message:"Deu bom!"})
+        return res.status(202).json({message:"Startup deletada com sucesso!"})
             
     } catch (error) {
         return res.status(400).json({message:error});
@@ -75,6 +78,19 @@ server.put('/startup/update/:id_startup', async(req, res)=>{
 });
 
 //Linguagem Programação
+server.get('/linguagem_programacao',  async (req, res)=>{
+    await db.sync();
+    const Linguagens = await Linguagem.findAll();
+
+    return res.status(200).json(Linguagens);
+});
+
+server.get('/linguagem_programacao/:id_linguagem',  async (req, res)=>{
+    await db.sync();
+    const Linguagens = await Linguagem.findOne({where: {id_linguagem: req.params.id_linguagem }});
+
+    return res.status(200).json(Linguagens);
+});
 server.post('/add/linguagem_programacao', async (req, res)=>{
     const {id_linguagem, nome_linguagem, ano_lancamento} = req.body;
 
@@ -89,11 +105,11 @@ server.post('/add/linguagem_programacao', async (req, res)=>{
     return res.json(novaLinguagem);
 });
 
-server.delete('/linguagem_programacao/:id_linguagem', async(req, res)=>{
+server.delete('/linguagem_programacao/delete/:id_linguagem', async(req, res)=>{
     try {
         await db.sync();
         const startup = await Linguagem.destroy({where:{id_linguagem: req.params.id_linguagem}});
-        return res.status(200).json({message:"Deu bom!"})
+        return res.status(200).json({message:"Linguagem deletada com sucesso!"})
             
     } catch (error) {
         return res.status(400).json({message:error});
@@ -109,6 +125,13 @@ server.put('/linguagem_programacao/:id_linguagem', async(req, res)=>{
 });
 
 //programador
+
+server.get('/programador',  async (req, res)=>{
+    await db.sync();
+    const Programadores = await Programador.findAll();
+
+    return res.status(200).json(Programadores);
+});
 
 server.post('/add/programador', async (req, res)=>{
     const {id_programador, nome_programador, genero, data_nascimento, email, id_startup } = req.body;
