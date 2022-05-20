@@ -1,10 +1,13 @@
 import mysql from 'mysql2';
 
 
-async function connect () {
-   const connection = await mysql.createConnection("mysql://root:af@localhost:3306/Startups");
+const connection =  mysql.createConnection({
+   host: 'localhost',
+   user: 'root',
+   database: 'Startups',
+   password: '84A06a20-'
+});
 
-   global.connection = connection;
-}
 
-connect();
+
+export default connection;
