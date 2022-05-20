@@ -3,7 +3,7 @@ import mysql from 'mysql2';
 import "dotenv/config.js";
 
 
-const db = new sequelize('Startups','root',process.env.DB_PASS,{
+const db = new sequelize('startups','root','84R06r20-',{
     host:'localhost',
     dialect:'mysql',
 })

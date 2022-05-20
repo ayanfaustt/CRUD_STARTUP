@@ -16,10 +16,19 @@ let corsOptions = {
 }
 
 const server = express();
+
 server.use(bodyParser.urlencoded({ extended: true }));
 server.use(bodyParser.json());
 //server.use(express.json());
-server.use(cors(corsOptions));
+
+server.use((req, res, next)=>{
+    //console.log('Acessou o Middleware');
+    res.header('Access-Control-Allow-Origin', '*')
+    res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE')
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
+    server.use(cors());
+    next();
+});
 
 
 //geral
@@ -77,7 +86,7 @@ server.delete('/startup/delete/:id_startup', async(req, res)=>{
 
 server.put('/startup/update/:id_startup', async(req, res)=>{
         await db.sync();
-        const {id_startup, nome_startup, cidade_sede} = req.body;
+        const {id_startup, nome_startup, cidade_sede} = req.query;
         const startupEdit = await Startup.update({nome_startup, cidade_sede},{where:{id_startup: req.params.id_startup}});
         return res.status(200).json({message:"Deu bom"})
 
@@ -124,7 +133,8 @@ server.delete('/linguagem_programacao/delete/:id_linguagem', async(req, res)=>{
 
 server.put('/linguagem_programacao/update/:id_linguagem', async(req, res)=>{
     await db.sync();
-    const {nome_linguagem, ano_lancamento} = req.body;
+    console.log(req.body)
+    const {nome_linguagem, ano_lancamento} = req.query;
     const linguagemEdit = await Linguagem.update({nome_linguagem: nome_linguagem, ano_lancamento: ano_lancamento}, {where:{id_linguagem: req.params.id_linguagem}});
     return res.status(200).json({message:'Deu bom'});
 
@@ -174,11 +184,16 @@ server.delete('/programador/delete/:id_programador', async(req, res)=>{
     }
 });
 
-server.put('/programador/:id_linguagem', async(req, res)=>{
+server.put('/programador/update/:id_programador', async(req, res)=>{
     await db.sync();
-    const {id_programador, nome_programador, genero, data_nascimento, email, id_startup } = req.query;
-    const linguagemEdit = await Linguagem.update({nome_programador, genero, data_nascimento, email, id_startup }, {where:{id_programador: req.params.id_programador}});
-    return res.status(200).json({message:'Deu bom'});
+    try {
+        const {id_programador, nome_programador, genero, data_nascimento, email, id_startup } = req.query;
+        const linguagemEdit = await Programador.update({nome_programador, genero, data_nascimento, email, id_startup }, {where:{id_programador: req.params.id_programador}});
+        return res.status(200).json({message:'Deu bom'});    
+    } catch (error) {
+        return res.status(400).json({message: 'Deu RUim'})
+    }
+    
 
 });
 
@@ -250,7 +265,6 @@ server.get('/consultaespecifica/:id_programador', async(req, res)=>{
     connection.query(
         'call informação_pessoa(?)',[pessoa],
         function(err, results, fields){
-            console.log(results);
             return res.status(200).json(results)
         }
     )
